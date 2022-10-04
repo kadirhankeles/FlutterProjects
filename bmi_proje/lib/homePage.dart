@@ -18,6 +18,9 @@ class _homePageState extends State<homePage> {
   double kilo = 0.0;
   double boy = 0.0;
   double ortalama = 0.0;
+  TextEditingController _controllerage=TextEditingController();
+  TextEditingController _controllerheight=TextEditingController();
+  TextEditingController _controllerweight=TextEditingController();
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
@@ -44,21 +47,16 @@ class _homePageState extends State<homePage> {
                 height: 30,
               ),
               TextField(
+                controller: _controllerage,
                  inputFormatters: <TextInputFormatter>[
                  FilteringTextInputFormatter.digitsOnly,
                  LengthLimitingTextInputFormatter(3),
                 ],
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
-                autofocus: true,
                 decoration: InputDecoration(
                   labelText: "Age",
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    if (value.isNotEmpty){yas = int.parse(value);}
-                    
-                  });
-                },
+           
               ),
               SizedBox(
                 height: 20,
@@ -71,10 +69,7 @@ class _homePageState extends State<homePage> {
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration:
                     InputDecoration(labelText: "Height", suffixText: "CM"),
-                onChanged: (value) {
-                 
-                  setState(() { boy = double.tryParse(value)??0;});
-                },
+               controller: _controllerheight,
               ),
               SizedBox(
                 height: 20,
@@ -87,27 +82,30 @@ class _homePageState extends State<homePage> {
                 keyboardType: TextInputType.number,
                 decoration:
                     InputDecoration(labelText: "Weight", suffixText: "KG"),
-                onChanged: (value) {
-                  setState(() {
-                    kilo = double.tryParse(value)??0;
-                  });
-                },
+               controller: _controllerweight,
               ),
               SizedBox(
                 height: 230,
               ),
               GestureDetector(
                 onTap: () {
-                  boy = boy / 100;
-                  ortalama = kilo / (boy * boy);
+
+
+                  print(_controllerage.text.isEmpty);                  
                   //print("Vücut kitle indeksiniz: $ortalama");
                   //Navigator.of(context).push(MaterialPageRoute(builder: (context)=>sonucEkrani() ));
-                  if (yas == 0 || boy == 0 || kilo == 0) {
+                  if (_controllerage.text.isEmpty || _controllerheight.text.isEmpty || _controllerweight.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text("Değerleri boş bırakmayınız"),
                     ));
                   }else{
-                    if((yas > 0 && yas <= 120) && (boy > 50 && boy <= 220) && (kilo > 0  && kilo <= 300)){
+                     yas=int.parse(_controllerage.text);
+                      kilo=double.parse(_controllerweight.text);
+                      boy=double.parse(_controllerheight.text);
+                    if((yas > 0 && yas <= 120) && (boy > 50 && boy <= 220) && (kilo > 0  && kilo <= 300)){ 
+                     
+                      boy = boy / 100;
+                  ortalama = kilo / (boy * boy);
                       Navigator.push(
                       context,
                       CupertinoPageRoute(
@@ -115,7 +113,8 @@ class _homePageState extends State<homePage> {
                               ortalama: ortalama,
                               yas: yas,
                               boy: boy,
-                              kilo: kilo)));} else {
+                              kilo: kilo)));} 
+                              else {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text("Girilen değerleri kontrol ediniz"),
                     ));
